@@ -1,0 +1,35 @@
+local ServerStorage = game:GetService("ServerStorage")
+local Class = require(game.ReplicatedStorage:WaitForChild("ReplicatedScripts"):WaitForChild("Libraries"):WaitForChild("Class"))
+local c = require(game.ServerScriptService:WaitForChild("DataStores"):WaitForChild("DataStoreConstants"))
+
+local Profiler = Class()
+
+local function CalculateCumulativeWeightedAverage(self)
+	while self._active do
+		task.wait(60) --wait a minute ( WHO ARE YOU??!)
+		self._minutesPassed += 1
+		-- gives the equivalent weight of the minutesPassed -1 to the current average, and averages it with the amount of calls given currently
+		self.averageCallsPerMinute = ((self.averageCallsPerMinute * (self._minutesPassed - 1)) + self._thisMinuteCalls)/self._minutesPassed
+		if self and self._active and self.averageCallsPerMinute >= c.SINGLE_SCRIPT_PER_MINUTE_CALLS_WARNING_THRESHOLD then
+			warn("Script "..self.scriptName.." is sending too many requests per minute! (Last minute: "..self._thisMinuteCalls..", Average: "..self.averageCallsPerMinute..")")
+		end
+		self._thisMinuteCalls = 0 -- reset every minute
+	end
+end
+
+function Profiler:New(scriptName : string)
+	self.scriptName = scriptName
+	self.averageCallsPerMinute = 0
+	self._thisMinuteCalls = 0
+	self._minutesPassed = 0
+	self._active = true
+	task.defer(function() --starts calculating the cumulative average of a script
+		CalculateCumulativeWeightedAverage(self)
+	end)
+end
+
+function Profiler:NewDSAccess()
+	self._thisMinuteCalls += 1
+end
+
+return Profiler

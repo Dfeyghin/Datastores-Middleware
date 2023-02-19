@@ -1,0 +1,57 @@
+local c = {}
+
+c.NUMBER_OF_ATTEMPTS_TO_ACCESS_DS = 3
+
+c.Enums = {
+	Priority = {
+		High = 1,
+		Standard = 2,
+		Low = 3,
+	},
+	SetType = {
+		Set = 1,
+		Increment = 2,
+		Remove = 3,
+	},
+	Call = { --created for ease of use (suggestions)
+		GetAsync = "GetAsync",
+		SetAsync = "SetAsync",
+		IncrementAsync = "IncrementAsync",
+		UpdateAsync = "UpdateAsync",
+		RemoveAsync = "RemoveAsync",
+		GetSortedAsync = "GetSortedAsync",
+		GetSortedAsyncByKey = "GetSortedAsyncByKey",
+		SetSortedAsync = "SetSortedAsync",
+		IncrementSortedAsync = "IncrementSortedAsync",
+		UpdateSortedAsync = "UpdateSortedAsync",
+		RemoveSortedAsync = "RemoveSortedAsync",
+	}
+} 
+
+--local callNamesById = {}
+
+--for name, id in pairs(c.Enums.Call) do
+--	callNamesById[id] = name
+--end
+
+--function c.GetCallName(id)
+--	return callNamesById[id]
+--end
+
+c.DATASTORES_ACCESS_RATE = 3
+
+c.NUMBER_OF_MESSAGES_PER_SECOND = 5 -- the place gets 5 stacks per 3 seconds, so 1.66667 per second, we will allow 5 per second (since we have a 2.5k stakc to begin with)
+c.NUMBER_OF_MESSAGES_PER_SECOND_WHEN_UNDER_BUDGET = 2 -- when reaching minimum reserve we will let 2 request per second
+c.NUMBER_OF_MESSAGES_PER_SECOND_WHEN_CRITICAL_BUDGET = 1 -- when reaching critical reserve we will let 1 request per second until we have enough again
+
+
+c.MINIMUM_BUDGET_RESERVE = 200
+c.CRITICAL_BUDGET_RESERVE = 50
+
+c.RETURNING_FROM_CRITICIAL_BUDGET = 500
+c.RETURNING_FROM_MINIMUM_BUDGET = 750
+
+c.SINGLE_SCRIPT_PER_MINUTE_CALLS_WARNING_THRESHOLD = 50
+
+
+return c
